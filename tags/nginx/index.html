@@ -6,16 +6,16 @@
   <meta name="author" content="一路向北">
   
   
-  <title>vue结合Java前后端分离开发跨域的坑 | 一路向北</title>
+  <title>标签: nginx | 一路向北</title>
 
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
   
-    <meta name="keywords" content="vue,vue,Java,跨域,">
+    <meta name="keywords" content="程序员, 开发, Java, 一路向北">
   
 
   
-  <meta name="description" content="这几天自己在做一个小项目，恰好自己采用的是前后分离的开发模式；由于我之前并没有接触vue和前后端分离的这种开发模式，遇到了跨域的问题还是折腾了很久。作为一名开发者，肯定是要有一颗不惧一切艰难险阻的心。">
+  <meta name="description" content="离开产品的程序员，开发的不是产品是功能.">
 
   
 
@@ -38,7 +38,7 @@
     welcome: {"enable":true,"interval":30},
     start_time: "2019-03-07",
     passwords: ["efe07af7441da2b69c4a41e42e73be4db47f66010a56900788a458354a7373ec", ],
-    is_post: true,
+    is_post: false,
     lock: false,
     author: "一路向北",
     share: {"twitter":true,"facebook":true,"weibo":true,"qq":true,"wechat":true},
@@ -155,88 +155,19 @@
 </nav>
 <div id="site-process"></div>
     <main>
-      
-  <div class="passage">
-  <div class="passage-meta">
-    <span>
-      <i class="fa fa-calendar"></i>2019-03-10
-    </span>
+      <div class="timeline">
+  <h2 class="timeline-title">标签: nginx</h2>
+  
     
-      <span>
-        | <a href="/categories/vue/"><i class="fa fa-bookmark"></i>vue</a>
-      </span>
+      <h3 class="timeline-subtitle">2019</h3>
     
-    <!-- 
-      <span>
-        | <i class="fa fa-unlock-alt"></i>UNLOCK
-      </span>
-     -->
-  </div>
-  <h1 class="passage-title">
-    vue结合Java前后端分离开发跨域的坑
-  </h1>
-  
-  <article class="passage-article">
-    <blockquote>
-<p>其实前后分离跨域这个坑还是挺好处理的。可能对于刚入手的小伙伴来说的话，是一件特别头疼的事情（对，就是我），那么我这边就说说我在实际开发中的解决方案以及相关的代码示例。</p>
-</blockquote>
-<h3 id="首先从vue这边来解决跨域这个问题。"><a href="#首先从vue这边来解决跨域这个问题。" class="headerlink" title="首先从vue这边来解决跨域这个问题。"></a>首先从vue这边来解决跨域这个问题。</h3><ul>
-<li>我们通过vue-cli这个来生成的vue项目的目录结构里面会有一个config目录，在config目录里面有一个文件名称叫dev.env.js的文件，只需要对该文件里面的 proxyTable 这个配置进行修改即可；<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">proxyTable: &#123;</span><br><span class="line">    &apos;/api&apos;: &#123;</span><br><span class="line">    target: &apos;http://www.hjieli.com/&apos;,</span><br><span class="line">    changeOrigin: true,</span><br><span class="line">    pathRewrite: &#123;</span><br><span class="line">    &apos;^/api&apos;: &apos;&apos;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;&#125;,</span><br></pre></td></tr></table></figure>
-</li>
-</ul>
-<p>target 表示的是你的后台访问地址</p>
-<h3 id="接下来就是后端"><a href="#接下来就是后端" class="headerlink" title="接下来就是后端"></a>接下来就是后端</h3><p>我这边后台使用的是ssm（Spring + SpringMVC + Mybatis）来进行接口开发的；所以我这里可以使用相关的注解来达到目的。只需要加上 @CrossOrigin 注解就可以了</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">@CrossOrigin</span><br><span class="line">@ReqMapping(value= &#123;&quot;login&quot;&#125;)</span><br><span class="line">@ResBody</span><br><span class="line">public String login(@RequestParam(&quot;returnUrl&quot;) String returnUrl,HttpServletRequest request,HttpServletResponse response)&#123;</span><br><span class="line">    String authorUrl = request.getServletContext().getInitParameter(&quot;weixinAuthorUrl&quot;).toString();</span><br><span class="line">    String redirectURL = wxMpService.oauth2buildAuthorizationUrl(authorUrl, WxConsts.OAuth2Scope.SNSAPI_BASE, URLEncoder.encode(returnUrl));</span><br><span class="line">    return redirectURL;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>以上例子就是一个获取生成的微信授权地址的代码，@ReqMapping 和 @ResBody 可以忽略掉，是我自己对 Spring源码进行了一些修改。</p>
-<h3 id="最后"><a href="#最后" class="headerlink" title="最后"></a>最后</h3><p>虽然我通过以上的方式解决了跨域的问题，但是在vue前端仅仅是作为开发阶段调试用的配置；在实际项目部署到服务器当中时，仅仅那么去做是远远不够的，还需要进行代码上的修改。如果你采用 nginx 来分离前后端的话，可能会比较简单一点，在后面部署的时候会给先伙伴们介绍介绍。</p>
-<h3 id="vue前后端分离的相关资料"><a href="#vue前后端分离的相关资料" class="headerlink" title="vue前后端分离的相关资料"></a>vue前后端分离的相关资料</h3><p><a href="https://www.jianshu.com/p/f880878c1398" target="_blank" rel="noopener">https://www.jianshu.com/p/f880878c1398</a><br><a href="http://www.siyuweb.com/webpack/2659.html" target="_blank" rel="noopener">http://www.siyuweb.com/webpack/2659.html</a><br><a href="https://www.jianshu.com/p/bfe5a43eb95b" target="_blank" rel="noopener">https://www.jianshu.com/p/bfe5a43eb95b</a><br><a href="https://blog.csdn.net/weixin_41381822/article/details/83583324" target="_blank" rel="noopener">https://blog.csdn.net/weixin_41381822/article/details/83583324</a></p>
-  </article>
-  <aside class="table-content" id="site-toc">
-  <div class="table-content-title">
-    <i class="fa fa-arrow-right fa-lg" id="site-toc-hide-btn"></i>
-    <span>目录</span>
-  </div>
-  <div class="table-content-main">
-    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#首先从vue这边来解决跨域这个问题。"><span class="toc-text">首先从vue这边来解决跨域这个问题。</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#接下来就是后端"><span class="toc-text">接下来就是后端</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#最后"><span class="toc-text">最后</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#vue前后端分离的相关资料"><span class="toc-text">vue前后端分离的相关资料</span></a></li></ol>
-  </div>
-</aside>
-  
-    <aside class="passage-copyright">
-      <div>本文作者: 一路向北</div>
-      
-        <div>
-          原文链接: 
-          <a href target="_blank">https://19960828.github.io/passages/vue-cross/</a>
-        </div>
-      
-      <div>
-        版权声明: 本博客所有文章除特别声明外, 均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> 许可协议. 转载请注明出处!
-      </div>
-    </aside>
-  
-  
-    <div class="passage-tags">
-     
-      <a href="/tags/vue/"><i class="fa fa-tags"></i>vue</a>
-     
-      <a href="/tags/Java/"><i class="fa fa-tags"></i>Java</a>
-     
-      <a href="/tags/跨域/"><i class="fa fa-tags"></i>跨域</a>
-    
+    <div class="timeline-item">
+      <time>2019-03-11</time>
+      <a target="_self" href="/passages/nginx-for-windows/">Windows 系统安装 Nginx 环境</a>
     </div>
   
 </div>
-
-
     </main>
-    
-      <div class="site-comment-contanier">
-  <p id="site-comment-info">
-    <i class="fa fa-spinner fa-spin"></i> 评论加载中
-  </p>
-  <div id="site-comment">
-  </div>
-</div>
     
     <div class="site-footer-wrapper">
   <footer class="site-footer">
@@ -307,19 +238,19 @@
 
 <div class="bottom-bar">
   <div class="bottom-bar-left">
-    <a href="/passages/nginx-for-windows/" data-enable="true">
+    <a href="javascript:void(0);" data-enable="false">
       <i class="fa fa-arrow-left"></i>
     </a>
-    <a href="/passages/hu-ran-zhi-jian/" data-enable="true">
+    <a href="javascript:void(0);" data-enable="false">
       <i class="fa fa-arrow-right"></i>
     </a>
   </div>
   <div class="bottom-bar-right">
-    <a href="javascript:void(0);" data-enable="true" id="site-toc-show-btn">
+    <a href="javascript:void(0);" data-enable="false" id="site-toc-show-btn">
       <i class="fa fa-bars"></i>
     </a>
     
-      <a href="#site-comment" data-enable="true">
+      <a href="javascript:void(0);" data-enable="false">
         <i class="fa fa-commenting"></i>
       </a>
     
